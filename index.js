@@ -10,14 +10,20 @@ const binance = new Binance().options({
 
 app.get('/simular', async (req, res) => {
   try {
-    const candles = await binance.candlesticks("BTCUSDT", "1m", { limit: 10 });
-    res.json({
-      message: "Simulação realizada com sucesso",
-      data: candles
-    });
+    binance.candlesticks("BTCUSDT", "1m", (error, ticks, symbol) => {
+      if (error || !ticks) {
+        console.error("Erro ao buscar dados:", error);
+        return res.status(500).json({ error: "Erro ao buscar dados da Binance" });
+      }
+
+      res.json({
+        message: "Simulação realizada com sucesso",
+        data: ticks
+      });
+    }, { limit: 10 });
   } catch (err) {
-    console.error("Erro ao buscar dados:", err.body || err);
-    res.status(500).json({ error: "Erro ao buscar dados da Binance" });
+    console.error("Erro inesperado:", err);
+    res.status(500).json({ error: 'Erro inesperado ao simular' });
   }
 });
 
