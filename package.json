@@ -1,9 +1,7 @@
 {
   "name": "hyflow-tradebot",
   "version": "1.0.0",
-  "scripts": {
-    "dev": "vercel dev"
-  },
+  "type": "module",
   "dependencies": {
     "axios": "^1.6.8"
   }
