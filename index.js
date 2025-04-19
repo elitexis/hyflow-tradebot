@@ -1,27 +1,27 @@
 const express = require('express');
-const Binance = require('node-binance-api');
+const axios = require('axios');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Cliente da Binance
-const binance = new Binance().options({
-  useServerTime: true
-});
-
-app.get('/simular', (req, res) => {
-  binance.candlesticks("BTCUSDT", "1m", { limit: 10 }, (error, ticks, symbol) => {
-    if (error) {
-      console.error("Erro ao buscar dados:", error);
-      // Envia uma única resposta de erro
-      return res.status(500).json({ error: "Erro ao buscar dados da Binance" });
-    }
-
-    // Envia a resposta somente se não houve erro
-    res.json({
-      message: "Simulação realizada com sucesso",
-      data: ticks
+app.get('/simular', async (req, res) => {
+  try {
+    const response = await axios.get('https://api.binance.com/api/v3/klines', {
+      params: {
+        symbol: 'BTCUSDT',
+        interval: '1m',
+        limit: 10
+      }
     });
-  });
+
+    res.json({
+      message: 'Simulação realizada com sucesso',
+      data: response.data
+    });
+
+  } catch (error) {
+    console.error('Erro ao buscar dados da Binance:', error.message);
+    res.status(500).json({ error: 'Erro ao buscar dados da Binance' });
+  }
 });
 
 app.listen(port, () => {
