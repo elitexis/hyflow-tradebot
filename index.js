@@ -3,28 +3,25 @@ const Binance = require('node-binance-api');
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Cliente da Binance
 const binance = new Binance().options({
-  useServerTime: true,
-  reconnect: true,
+  useServerTime: true
 });
 
-app.get('/simular', async (req, res) => {
-  try {
-    binance.candlesticks("BTCUSDT", "1m", (error, ticks, symbol) => {
-      if (error || !ticks) {
-        console.error("Erro ao buscar dados:", error);
-        return res.status(500).json({ error: "Erro ao buscar dados da Binance" });
-      }
+app.get('/simular', (req, res) => {
+  binance.candlesticks("BTCUSDT", "1m", { limit: 10 }, (error, ticks, symbol) => {
+    if (error) {
+      console.error("Erro ao buscar dados:", error);
+      // Envia uma única resposta de erro
+      return res.status(500).json({ error: "Erro ao buscar dados da Binance" });
+    }
 
-      res.json({
-        message: "Simulação realizada com sucesso",
-        data: ticks
-      });
-    }, { limit: 10 });
-  } catch (err) {
-    console.error("Erro inesperado:", err);
-    res.status(500).json({ error: 'Erro inesperado ao simular' });
-  }
+    // Envia a resposta somente se não houve erro
+    res.json({
+      message: "Simulação realizada com sucesso",
+      data: ticks
+    });
+  });
 });
 
 app.listen(port, () => {
