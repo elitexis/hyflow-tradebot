@@ -5,7 +5,7 @@ const port = process.env.PORT || 3000;
 
 app.get('/simular', async (req, res) => {
   try {
-    const response = await axios.get('https://binance-proxy.vitalflux.dev/api/v3/klines', {
+    const response = await axios.get('https://api1.binance.com/api/v3/klines', {
       params: {
         symbol: 'BTCUSDT',
         interval: '1m',
